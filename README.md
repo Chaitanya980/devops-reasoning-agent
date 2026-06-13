@@ -107,12 +107,35 @@ Open the URL shown in the terminal (typically `http://localhost:8501`).
 
 See [DEMO.md](DEMO.md) for a 60-second judge demo script.
 
-## Deploy to Streamlit Cloud
+## Deploy to Streamlit Community Cloud
 
-1. Push the repo to GitHub (exclude `.env` — it is in `.gitignore`).
-2. Go to [share.streamlit.io](https://share.streamlit.io) and connect the repo.
-3. Set secrets in Streamlit Cloud matching `.env.example` keys.
-4. Set main file to `app.py`.
+The app is deploy-ready — no code changes needed.
+
+1. Push the repo to GitHub (already done; `.env` stays excluded via `.gitignore`).
+2. Go to [share.streamlit.io](https://share.streamlit.io) and **sign in with GitHub**.
+3. Click **Create app → Deploy from GitHub**, then set:
+   - **Repository:** `Chaitanya980/devops-reasoning-agent`
+   - **Branch:** `main`
+   - **Main file path:** `app.py`
+4. Open **Advanced settings → Secrets** and paste (TOML format):
+
+   ```toml
+   AZURE_ENDPOINT = "https://your-resource.services.ai.azure.com/api/projects/your-project"
+   AZURE_API_KEY = "your-azure-api-key"
+   AZURE_AGENT_ID = "DevOpsReasoningAgent"
+   AZURE_MODEL = "o4-mini"
+   AZURE_API_VERSION = "v1"
+   GITHUB_TOKEN = "ghp_your_github_token"
+   ```
+
+   Streamlit Cloud exposes these as environment variables, which the app reads via `os.getenv(...)`.
+5. Click **Deploy**. You'll get a public URL like `https://<your-app>.streamlit.app`.
+
+**Demo-safe public deploy:** to host without exposing real Azure/GitHub keys, set a single secret instead and the app runs fully offline/deterministic:
+
+```toml
+DEMO_MODE = "1"
+```
 
 ## Project Structure
 
