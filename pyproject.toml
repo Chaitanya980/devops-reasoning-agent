@@ -1,0 +1,7 @@
+[tool.pytest.ini_options]
+# Ensure repo-root modules (agent.py, evaluator.py, etc.) are importable when
+# tests live under tests/. Without this, bare `pytest` only puts the tests
+# directory on sys.path and `import agent` fails.
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
