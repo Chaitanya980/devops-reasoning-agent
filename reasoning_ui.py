@@ -31,6 +31,41 @@ def render_reasoning_chain_sidebar(active_step: int = 4) -> None:
             st.info(f"{index}. {label}")
 
 
+def _confidence_band(confidence: float) -> tuple[str, str]:
+    """Return (label, color) describing a confidence score."""
+    if confidence >= 0.85:
+        return "High", "#27ae60"
+    if confidence >= 0.6:
+        return "Medium", "#f39c12"
+    return "Low", "#e74c3c"
+
+
+def render_result_header(analysis: dict[str, Any], verifier: dict[str, Any] | None = None) -> None:
+    """Render a top-of-result status strip: verifier badge, source, confidence gauge."""
+    confidence = float(analysis.get("confidence_score", 0.0) or 0.0)
+    band_label, band_color = _confidence_band(confidence)
+
+    col_status, col_source, col_conf = st.columns([1.2, 1, 1.4])
+    with col_status:
+        if verifier is None:
+            st.caption("Verifier")
+            st.write("—")
+        elif verifier.get("approved"):
+            st.success("Verifier ✓ Approved")
+        else:
+            st.warning("Verifier ⚠ Needs review")
+    with col_source:
+        st.caption("Source")
+        st.write("Offline (deterministic)" if analysis.get("offline") else "Azure o4-mini")
+    with col_conf:
+        st.caption(f"Confidence — {band_label}")
+        st.progress(min(max(confidence, 0.0), 1.0))
+        st.markdown(
+            f"<span style='color:{band_color}; font-weight:700;'>{confidence:.0%}</span>",
+            unsafe_allow_html=True,
+        )
+
+
 def render_analysis_progressive(analysis: dict[str, Any], verifier: dict[str, Any] | None = None) -> None:
     """Render analysis results as progressive expandable step cards."""
     error_type = analysis.get("error_type", "unknown")
@@ -42,6 +77,7 @@ def render_analysis_progressive(analysis: dict[str, Any], verifier: dict[str, An
     description = ERROR_TYPE_DESCRIPTIONS.get(error_type, "")
 
     st.markdown("### Analysis Results")
+    render_result_header(analysis, verifier)
     if summary:
         st.info(summary)
 

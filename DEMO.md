@@ -8,6 +8,8 @@ Use this 60–90 second script when presenting to hackathon judges.
 2. Confirm `.env` is configured and the Foundry agent responds
 3. Open the sidebar so judges can see the **Reasoning Chain** and **Evaluation** sections
 
+> **Reliability tip:** For a guaranteed-fast, offline demo (no API latency), run with `DEMO_MODE=1 streamlit run app.py`. Even without it, a failed Azure call automatically falls back to the deterministic analyzer, so the demo never hard-fails.
+
 ## 60-Second Demo Flow
 
 ### 1. Intro (10 seconds)
@@ -38,7 +40,7 @@ Use this 60–90 second script when presenting to hackathon judges.
 
 1. Click **Run Evaluation** in the sidebar
 2. Show the accuracy bar chart across error type, location, and fix quality
-3. Mention 10 built-in test cases and `eval_report.json` export
+3. Mention 15 built-in test cases and `eval_report.json` export
 
 ## Closing Line
 
@@ -48,9 +50,9 @@ Use this 60–90 second script when presenting to hackathon judges.
 
 | Problem | Fallback |
 |---------|----------|
-| Azure API slow | Use a pre-run analysis screenshot |
+| Azure API slow | Restart with `DEMO_MODE=1` for instant offline analysis |
 | GitHub write fails | Show issue/PR UI without clicking |
-| Eval takes too long | Show previously saved `eval_report.json` |
+| Eval takes too long | Run the sidebar **Demo Eval (5)** or show saved `eval_report.json` |
 
 ## Optional Talking Points
 

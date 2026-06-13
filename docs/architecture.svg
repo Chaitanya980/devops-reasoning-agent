@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="540" viewBox="0 0 940 540" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#5b6b7b"/>
+    </marker>
+    <style>
+      .box { fill:#ffffff; stroke:#5b6b7b; stroke-width:1.5; rx:10; }
+      .accent { fill:#eef4fb; stroke:#2f6fb0; }
+      .azure { fill:#e8f0fe; stroke:#1a73e8; }
+      .safe { fill:#eafaf1; stroke:#27ae60; }
+      .title { font-size:15px; font-weight:700; fill:#1f2d3d; }
+      .sub { font-size:11.5px; fill:#5b6b7b; }
+      .edge { stroke:#5b6b7b; stroke-width:1.6; fill:none; marker-end:url(#arrow); }
+      .h { font-size:13px; font-weight:700; fill:#2f6fb0; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="940" height="540" fill="#fafbfc"/>
+  <text x="30" y="38" font-size="20" font-weight="700" fill="#1f2d3d">DevOps Reasoning Agent  Architecture</text>
+
+  <!-- Inputs -->
+  <rect class="box accent" x="30" y="70" width="200" height="110" rx="10"/>
+  <text class="title" x="50" y="98">Input Sources</text>
+  <text class="sub" x="50" y="120">" Paste failure log</text>
+  <text class="sub" x="50" y="138">" Fetch GitHub Actions run</text>
+  <text class="sub" x="50" y="156">" Built-in demo failures</text>
+
+  <!-- Streamlit UI -->
+  <rect class="box" x="30" y="220" width="200" height="90" rx="10"/>
+  <text class="title" x="50" y="250">Streamlit UI</text>
+  <text class="sub" x="50" y="272">app.py · reasoning_ui.py</text>
+  <text class="sub" x="50" y="290">progressive 4-step view</text>
+
+  <!-- Pre-processing -->
+  <rect class="box safe" x="300" y="200" width="220" height="130" rx="10"/>
+  <text class="h" x="320" y="228">Pre-processing &amp; Safety</text>
+  <text class="sub" x="320" y="250">log_parser.py  exit code,</text>
+  <text class="sub" x="320" y="268">failing step, error snippet</text>
+  <text class="sub" x="320" y="290">guardrails.py  secret</text>
+  <text class="sub" x="320" y="308">redaction + write approval</text>
+
+  <!-- Agent core -->
+  <rect class="box azure" x="590" y="70" width="320" height="150" rx="10"/>
+  <text class="title" x="612" y="98">agent.py  analyze_failure()</text>
+  <text class="sub" x="612" y="122">4-step chain on Azure AI Foundry (o4-mini):</text>
+  <text class="sub" x="612" y="142">1. CLASSIFY  ’  2. LOCATE</text>
+  <text class="sub" x="612" y="160">3. ROOT CAUSE  ’  4. FIX (+ patch)</text>
+  <text class="sub" x="612" y="184">20-type taxonomy · structured JSON</text>
+  <text class="sub" x="612" y="202">DEMO_MODE ’ deterministic offline fallback</text>
+
+  <!-- Verifier -->
+  <rect class="box azure" x="590" y="250" width="320" height="80" rx="10"/>
+  <text class="title" x="612" y="278">verifier.py  Critic / Verifier</text>
+  <text class="sub" x="612" y="300">second-pass review, approves or</text>
+  <text class="sub" x="612" y="316">revises the draft before any write</text>
+
+  <!-- GitHub automation -->
+  <rect class="box" x="300" y="390" width="320" height="110" rx="10"/>
+  <text class="title" x="322" y="418">github_client.py  Automation</text>
+  <text class="sub" x="322" y="440">fetch failed-job logs + workflow YAML</text>
+  <text class="sub" x="322" y="458">create issue · open Fix PR</text>
+  <text class="sub" x="322" y="476">PR commits a real patched workflow file</text>
+
+  <!-- Evaluation -->
+  <rect class="box safe" x="660" y="390" width="250" height="110" rx="10"/>
+  <text class="h" x="682" y="418">evaluator.py</text>
+  <text class="sub" x="682" y="440">15 taxonomy test cases</text>
+  <text class="sub" x="682" y="458">multi-metric accuracy chart</text>
+  <text class="sub" x="682" y="476">dogfooded in GitHub Actions CI</text>
+
+  <!-- Edges -->
+  <path class="edge" d="M130,180 L130,220"/>
+  <path class="edge" d="M230,265 L300,265"/>
+  <path class="edge" d="M520,250 L590,170"/>
+  <path class="edge" d="M750,220 L750,250"/>
+  <path class="edge" d="M590,300 L460,330 L460,390"/>
+  <path class="edge" d="M620,445 L660,445"/>
+</svg>

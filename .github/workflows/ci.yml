@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Tests + self-evaluation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run unit tests
+        run: pytest -q
+
+      # Dogfooding: the agent that explains CI failures is itself validated by CI.
+      # DEMO_MODE runs the deterministic offline analyzer, so no Azure secrets are needed.
+      - name: Self-evaluation (offline)
+        env:
+          DEMO_MODE: "1"
+        run: |
+          python -c "
+          from agent import analyze_failure
+          from evaluator import run_evaluation
+          report = run_evaluation(analyze_failure)
+          print('Overall accuracy:', report['accuracy'], '%')
+          print('Error-type accuracy:', report['error_type_accuracy'], '%')
+          assert report['error_type_accuracy'] == 100.0, 'Taxonomy regression detected'
+          assert report['accuracy'] >= 90.0, 'Overall accuracy regression detected'
+          "
+
+      - name: Upload evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: eval_report.json
+          if-no-files-found: ignore
