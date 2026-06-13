@@ -6,7 +6,47 @@ Instead of scrolling through thousands of log lines, paste a failure log, fetch 
 
 ## Architecture
 
-![Architecture diagram](docs/architecture.svg)
+```
+                         INPUT SOURCES
+        Paste log  |  Fetch GitHub Actions run  |  Demo failures
+                                |
+                                v
++-----------------------------------------------------------------+
+|                       Streamlit UI (app.py)                     |
+|        reasoning_ui.py — progressive 4-step view, badges        |
++-----------------------------------------------------------------+
+                                |
+                                v
++-----------------------------------------------------------------+
+|              Pre-processing & Safety                            |
+|   log_parser.py   — exit code, failing step, error snippet      |
+|   guardrails.py   — secret redaction + write approval           |
++-----------------------------------------------------------------+
+                                |
+                                v
++-----------------------------------------------------------------+
+|                  agent.py — analyze_failure()                   |
+|   4-step chain on Azure AI Foundry (o4-mini):                   |
+|     1. CLASSIFY  ->  2. LOCATE  ->  3. ROOT CAUSE  ->  4. FIX    |
+|   20-type taxonomy (error_types.py) -> structured JSON          |
+|   DEMO_MODE / failure -> offline_analyzer.py (deterministic)    |
++-----------------------------------------------------------------+
+                                |
+                                v
++-----------------------------------------------------------------+
+|             verifier.py — Critic / Verifier (2nd pass)          |
+|        approves or revises the draft before any write           |
++-----------------------------------------------------------------+
+                  |                              |
+                  v                              v
++-----------------------------+   +-----------------------------+
+|  github_client.py           |   |  evaluator.py               |
+|  fetch logs + workflow YAML |   |  15 taxonomy test cases     |
+|  create issue               |   |  multi-metric accuracy      |
+|  open Fix PR (real patched  |   |  dogfooded by GitHub        |
+|  workflow file committed)   |   |  Actions CI (.github/)      |
++-----------------------------+   +-----------------------------+
+```
 
 ## Highlights
 
@@ -153,7 +193,6 @@ devops-reasoning-agent/
 ├── reasoning_ui.py       # Streamlit step components
 ├── app.py                # Main Streamlit app
 ├── tests/test_core.py    # Unit + integration tests (no network/secrets)
-├── docs/architecture.svg # Architecture diagram
 ├── .github/workflows/ci.yml  # CI: tests + self-evaluation (dogfooding)
 ├── DEMO.md               # 60-second demo script
 ├── requirements.txt
